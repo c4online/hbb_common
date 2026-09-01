@@ -67,13 +67,28 @@ lazy_static::lazy_static! {
     static ref STATUS: RwLock<Status> = RwLock::new(Status::load());
     static ref TRUSTED_DEVICES: RwLock<(Vec<TrustedDevice>, bool)> = Default::default();
     static ref ONLINE: Mutex<HashMap<String, i64>> = Default::default();
-    pub static ref PROD_RENDEZVOUS_SERVER: RwLock<String> = RwLock::new("".to_owned());
-    pub static ref EXE_RENDEZVOUS_SERVER: RwLock<String> = Default::default();
+// ID 服务器地址
+    pub static ref PROD_RENDEZVOUS_SERVER: RwLock<String> = RwLock::new("r.3d98.com.cn:21116".to_owned());
+// exe 启动时使用的服务器地址（建议保持一致）
+    pub static ref EXE_RENDEZVOUS_SERVER: RwLock<String> = RwLock::new("r.3d98.com.cn:21116".to_owned());
     pub static ref APP_NAME: RwLock<String> = RwLock::new("RustDesk".to_owned());
     static ref KEY_PAIR: Mutex<Option<KeyPair>> = Default::default();
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
-    pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
+    pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = {
+        let mut map = HashMap::new();
+
+        // 中继服务器地址 (hbbr 默认端口 21117)
+        map.insert("relay-server".to_string(), "r.3d98.com.cn:21117".to_string());
+
+        // API 服务器地址 (默认 http://ip:21114)
+        map.insert("api-server".to_string(), "http://r.3d98.com.cn:21114".to_string());
+
+        // 密钥 (必须与服务器端 id_ed25519.pub 内容一致)
+        map.insert("key".to_string(), "3yPOFgXbTyzUf0WbgBRsQ9TAmCDqd+nz0NhY8E6YcKw=".to_string());
+
+        RwLock::new(map)
+    };
     pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
